@@ -212,6 +212,18 @@ body {
   box-shadow: 0 10px 24px rgba(124, 58, 237, 0.4);
 }
 
+.applepay-note {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 14px;
+  line-height: 1.7;
+  text-align: center;
+}
+
 .secure {
   margin: 16px 0 0;
   text-align: center;

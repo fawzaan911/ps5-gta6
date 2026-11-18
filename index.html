@@ -50,6 +50,10 @@
 
       <div class="mysr-form"></div>
 
+      <p class="applepay-note" id="applepay-unavailable" hidden>
+        الدفع متاح عبر Apple Pay فقط. افتح الصفحة من آيفون أو ماك باستخدام متصفح Safari.
+      </p>
+
       <p class="secure">🔒 الدفع آمن ومشفّر عبر بوابة ميسر</p>
     </section>
   </div>
@@ -89,8 +93,17 @@
       callback_url: new URL("thanks.html", window.location.href).href,
       language: "ar",
       supported_networks: ["mada", "visa", "mastercard"],
-      methods: ["creditcard"],
+      methods: ["applepay"],
+      apple_pay: {
+        country: "SA",
+        label: "PS5 و GTA 6",
+        validate_merchant_url: "https://api.moyasar.com/v1/applepay/initiate",
+      },
     });
+
+    if (!(window.ApplePaySession && ApplePaySession.canMakePayments())) {
+      document.getElementById("applepay-unavailable").hidden = false;
+    }
   </script>
 </body>
 </html>
