@@ -59,17 +59,26 @@
   <script>
     const cfg = window.DONATION_CONFIG;
     const fmt = (n) => n.toLocaleString("ar-SA");
-    const collected = Math.min(cfg.collectedAmount, cfg.goalAmount);
-    const percent = Math.round((collected / cfg.goalAmount) * 100);
 
-    document.getElementById("collected").textContent = fmt(cfg.collectedAmount);
+    function renderProgress(total) {
+      const collected = Math.min(total, cfg.goalAmount);
+      const percent = Math.round((collected / cfg.goalAmount) * 100);
+
+      document.getElementById("collected").textContent = fmt(total);
+      document.getElementById("remaining").textContent = fmt(cfg.goalAmount - collected);
+      document.getElementById("percent").textContent = percent + "%";
+      requestAnimationFrame(() => {
+        document.getElementById("bar").style.width = Math.max(percent, 2) + "%";
+      });
+    }
+
     document.getElementById("goal").textContent = fmt(cfg.goalAmount);
-    document.getElementById("remaining").textContent = fmt(cfg.goalAmount - collected);
     document.getElementById("amount").textContent = fmt(cfg.donationAmount);
-    document.getElementById("percent").textContent = percent + "%";
-    requestAnimationFrame(() => {
-      document.getElementById("bar").style.width = Math.max(percent, 2) + "%";
-    });
+
+    fetch("data.json", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data) => renderProgress(data.collected))
+      .catch(() => renderProgress(cfg.collectedAmount));
 
     Moyasar.init({
       element: ".mysr-form",
