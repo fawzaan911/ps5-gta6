@@ -16,7 +16,7 @@ def create_invoice() -> str:
     body = json.dumps({
         "amount": 1000,
         "currency": "SAR",
-        "description": "تبرع لشراء PS5 و GTA 6",
+        "description": "اشتراك",
         "success_url": SITE_URL + "thanks.html?status=paid",
         "back_url": SITE_URL,
     }).encode()
