@@ -42,9 +42,15 @@
         <span>متبقي <span id="remaining">0</span> ريال</span>
       </div>
 
-      <div class="amount">
-        <span>مبلغ التبرع</span>
-        <strong><span id="amount">10</span> ريال</strong>
+      <div class="amount-picker">
+        <span class="picker-label">اختر مبلغ التبرع</span>
+        <div class="presets" id="presets"></div>
+        <label class="custom-amount">
+          <span>أو اكتب مبلغ</span>
+          <input type="number" id="custom-amount" inputmode="numeric" step="1" />
+          <span>ريال</span>
+        </label>
+        <p class="amount-error" id="amount-error" hidden></p>
       </div>
 
       <a class="donate-btn" id="donate-btn" href="#">
@@ -74,15 +80,54 @@
     }
 
     document.getElementById("goal").textContent = fmt(cfg.goalAmount);
-    document.getElementById("amount").textContent = fmt(cfg.donationAmount);
 
     fetch(cfg.totalUrl, { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => renderProgress(data.collected))
       .catch(() => renderProgress(cfg.collectedAmount));
 
-    document.getElementById("btn-amount").textContent = fmt(cfg.donationAmount);
-    document.getElementById("donate-btn").href = cfg.donateUrl;
+    const presets = document.getElementById("presets");
+    const customInput = document.getElementById("custom-amount");
+    const errorEl = document.getElementById("amount-error");
+    const donateBtn = document.getElementById("donate-btn");
+    customInput.min = cfg.minAmount;
+    customInput.max = cfg.maxAmount;
+    customInput.placeholder = cfg.minAmount + " - " + cfg.maxAmount;
+
+    function setAmount(amount) {
+      const valid = Number.isInteger(amount) && amount >= cfg.minAmount && amount <= cfg.maxAmount;
+      errorEl.hidden = valid;
+      errorEl.textContent = "المبلغ لازم يكون رقم صحيح من " + fmt(cfg.minAmount) + " إلى " + fmt(cfg.maxAmount) + " ريال";
+      donateBtn.classList.toggle("disabled", !valid);
+      if (valid) {
+        document.getElementById("btn-amount").textContent = fmt(amount);
+        donateBtn.href = cfg.donateUrl + "?amount=" + amount;
+      } else {
+        donateBtn.removeAttribute("href");
+      }
+      presets.querySelectorAll("button").forEach((b) => {
+        b.classList.toggle("active", Number(b.dataset.amount) === amount);
+      });
+    }
+
+    cfg.presetAmounts.forEach((amount) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.amount = amount;
+      btn.textContent = fmt(amount) + " ريال";
+      btn.addEventListener("click", () => {
+        customInput.value = "";
+        setAmount(amount);
+      });
+      presets.appendChild(btn);
+    });
+
+    customInput.addEventListener("input", () => {
+      if (customInput.value === "") return setAmount(cfg.defaultAmount);
+      setAmount(Number(customInput.value));
+    });
+
+    setAmount(cfg.defaultAmount);
   </script>
 </body>
 </html>

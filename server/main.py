@@ -1,4 +1,4 @@
-"""سيرفر الحملة: /donate يُنشئ فاتورة ميسر ويحوّل لصفحة الدفع، و /total يُرجع مجموع المدفوع."""
+"""سيرفر الحملة: /donate?amount=N يُنشئ فاتورة ميسر ويحوّل لصفحة الدفع، و /total يُرجع مجموع المدفوع."""
 
 import base64
 import json
@@ -8,6 +8,7 @@ import time
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, urlparse
 
 SITE_URL = os.environ.get("SITE_URL", "https://fawzaan911.github.io/ps5-gta6/")
 SECRET_KEY = os.environ["MOYASAR_SECRET_KEY"].strip()
@@ -15,6 +16,9 @@ AUTH = "Basic " + base64.b64encode(f"{SECRET_KEY}:".encode()).decode()
 DESCRIPTION = "gta6+ps5"
 CAMPAIGN = "ps5-gta6"
 TOTAL_CACHE_SECONDS = 60
+MIN_AMOUNT = 2
+MAX_AMOUNT = 25
+DEFAULT_AMOUNT = 10
 
 _total_cache = {"value": None, "at": 0.0}
 _total_lock = threading.Lock()
@@ -36,9 +40,17 @@ def moyasar(path: str, body: dict | None = None) -> dict:
         return json.load(res)
 
 
-def create_invoice() -> str:
+def parse_amount(query: str) -> int | None:
+    raw = (parse_qs(query).get("amount") or [str(DEFAULT_AMOUNT)])[0]
+    if not raw.isdigit():
+        return None
+    amount = int(raw)
+    return amount if MIN_AMOUNT <= amount <= MAX_AMOUNT else None
+
+
+def create_invoice(amount: int) -> str:
     url = moyasar("/invoices", {
-        "amount": 1000,
+        "amount": amount * 100,
         "currency": "SAR",
         "description": DESCRIPTION,
         "success_url": SITE_URL + "thanks.html?status=paid",
@@ -84,8 +96,15 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def handle_donate(self):
+        amount = parse_amount(urlparse(self.path).query)
+        if amount is None:
+            self.send_response(400)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(f"المبلغ لازم يكون من {MIN_AMOUNT} إلى {MAX_AMOUNT} ريال.".encode())
+            return
         try:
-            url = create_invoice()
+            url = create_invoice(amount)
         except Exception as exc:
             code = ""
             if isinstance(exc, urllib.error.HTTPError):
