@@ -76,7 +76,7 @@
     document.getElementById("goal").textContent = fmt(cfg.goalAmount);
     document.getElementById("amount").textContent = fmt(cfg.donationAmount);
 
-    fetch("data.json", { cache: "no-store" })
+    fetch(cfg.totalUrl, { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : Promise.reject()))
       .then((data) => renderProgress(data.collected))
       .catch(() => renderProgress(cfg.collectedAmount));

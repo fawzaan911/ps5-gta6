@@ -3,8 +3,6 @@ name: Deploy site
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -24,26 +22,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Fetch donation total from Moyasar
-        id: total
-        env:
-          MOYASAR_SECRET_KEY: ${{ secrets.MOYASAR_SECRET_KEY }}
-          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-        run: node scripts/update-total.mjs
-
-      - if: github.event_name != 'schedule' || steps.total.outputs.changed == 'true'
-        uses: actions/configure-pages@v5
-
-      - if: github.event_name != 'schedule' || steps.total.outputs.changed == 'true'
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: .
-
-      - if: github.event_name != 'schedule' || steps.total.outputs.changed == 'true'
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
