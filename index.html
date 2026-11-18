@@ -6,7 +6,6 @@
   <title> PS5 و GTA 6</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -48,17 +47,15 @@
         <strong><span id="amount">10</span> ريال</strong>
       </div>
 
-      <div class="mysr-form"></div>
-
-      <p class="applepay-note" id="applepay-unavailable" hidden>
-        الدفع متاح عبر Apple Pay فقط. افتح الصفحة من آيفون أو ماك باستخدام متصفح Safari.
-      </p>
+      <a class="donate-btn" id="donate-btn" href="#">
+        تبرع بـ <span id="btn-amount">10</span> ريال
+      </a>
+      <p class="methods">Apple Pay · مدى · فيزا · ماستركارد</p>
 
       <p class="secure">🔒 الدفع آمن ومشفّر عبر بوابة ميسر</p>
     </section>
   </div>
 
-  <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
   <script src="config.js"></script>
   <script>
     const cfg = window.DONATION_CONFIG;
@@ -84,26 +81,8 @@
       .then((data) => renderProgress(data.collected))
       .catch(() => renderProgress(cfg.collectedAmount));
 
-    Moyasar.init({
-      element: ".mysr-form",
-      amount: cfg.donationAmount * 100,
-      currency: "SAR",
-      description: "تبرع لشراء PS5 و GTA 6",
-      publishable_api_key: cfg.publishableKey,
-      callback_url: new URL("thanks.html", window.location.href).href,
-      language: "ar",
-      supported_networks: ["mada", "visa", "mastercard"],
-      methods: ["applepay"],
-      apple_pay: {
-        country: "SA",
-        label: "PS5 و GTA 6",
-        validate_merchant_url: "https://api.moyasar.com/v1/applepay/initiate",
-      },
-    });
-
-    if (!(window.ApplePaySession && ApplePaySession.canMakePayments())) {
-      document.getElementById("applepay-unavailable").hidden = false;
-    }
+    document.getElementById("btn-amount").textContent = fmt(cfg.donationAmount);
+    document.getElementById("donate-btn").href = cfg.donateUrl;
   </script>
 </body>
 </html>

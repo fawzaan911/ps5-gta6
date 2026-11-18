@@ -32,7 +32,8 @@ def create_invoice() -> str:
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=15) as res:
-        return json.load(res)["url"]
+        url = json.load(res)["url"]
+    return url.replace("lang=en", "lang=ar") if "lang=" in url else url + ("&" if "?" in url else "?") + "lang=ar"
 
 
 class Handler(BaseHTTPRequestHandler):

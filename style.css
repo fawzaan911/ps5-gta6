@@ -191,37 +191,30 @@ body {
 
 .amount strong { font-size: 24px; color: var(--purple); }
 
-.card .mysr-form {
-  max-width: none !important;
-  width: 100% !important;
-  margin: 0 !important;
-  text-align: start;
-}
-
-.card .mysr-form .mysr-form-button {
-  background: linear-gradient(135deg, var(--pink), var(--purple)) !important;
-  border: none !important;
-  border-radius: 12px !important;
-  font-family: inherit !important;
-  font-weight: 700 !important;
+.donate-btn {
+  display: block;
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: 800;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card .mysr-form .mysr-form-button:hover {
+.donate-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.45);
 }
 
-.applepay-note {
-  margin: 0;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #9a3412;
-  font-size: 14px;
-  line-height: 1.7;
+.methods {
+  margin: 12px 0 0;
   text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
 }
 
 .secure {
