@@ -3,11 +3,12 @@
 import base64
 import json
 import os
+import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 SITE_URL = os.environ.get("SITE_URL", "https://fawzaan911.github.io/ps5-gta6/")
-SECRET_KEY = os.environ["MOYASAR_SECRET_KEY"]
+SECRET_KEY = os.environ["MOYASAR_SECRET_KEY"].strip()
 AUTH = "Basic " + base64.b64encode(f"{SECRET_KEY}:".encode()).decode()
 
 
@@ -39,11 +40,16 @@ class Handler(BaseHTTPRequestHandler):
         try:
             url = create_invoice()
         except Exception as exc:
-            self.log_error("Moyasar invoice failed: %s", exc)
+            code = ""
+            if isinstance(exc, urllib.error.HTTPError):
+                code = f" (Moyasar HTTP {exc.code})"
+                self.log_error("Moyasar invoice failed: HTTP %s %s", exc.code, exc.read()[:300])
+            else:
+                self.log_error("Moyasar invoice failed: %s", exc)
             self.send_response(502)
             self.send_header("Content-Type", "text/plain; charset=utf-8")
             self.end_headers()
-            self.wfile.write("تعذر إنشاء رابط الدفع، حاول مرة أخرى.".encode())
+            self.wfile.write(f"تعذر إنشاء رابط الدفع، حاول مرة أخرى.{code}".encode())
             return
         self.send_response(303)
         self.send_header("Location", url)
