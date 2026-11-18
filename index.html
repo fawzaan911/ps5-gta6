@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> PS5 و GTA 6</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <section class="showcase">
+      <span class="tag">🎮 حملة تبرع</span>
+      <h1 class="headline">
+        ادعمني عشان أشتري
+        <span class="grad">PS5 و GTA 6</span>
+      </h1>
+
+      <div class="products">
+        <div class="product ps5"><img src="images/ps5.webp" alt="جهاز PlayStation 5" /></div>
+        <div class="plus">+</div>
+        <div class="product gta"><img src="images/gta6.webp" alt="لعبة GTA 6" /></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>تبرع الآن</h2>
+      <div class="stats">
+        <div>
+          <small>تم جمع</small>
+          <strong><span id="collected">0</span> ريال</strong>
+        </div>
+        <div class="goal">
+          <small>الهدف</small>
+          <strong><span id="goal">0</span> ريال</strong>
+        </div>
+      </div>
+      <div class="progress"><div class="progress-bar" id="bar"></div></div>
+      <div class="meta">
+        <span><b id="percent">0%</b> مكتمل</span>
+        <span>متبقي <span id="remaining">0</span> ريال</span>
+      </div>
+
+      <div class="amount">
+        <span>مبلغ التبرع</span>
+        <strong><span id="amount">10</span> ريال</strong>
+      </div>
+
+      <div class="mysr-form"></div>
+
+      <p class="secure">🔒 الدفع آمن ومشفّر عبر بوابة ميسر</p>
+    </section>
+  </div>
+
+  <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
+  <script src="config.js"></script>
+  <script>
+    const cfg = window.DONATION_CONFIG;
+    const fmt = (n) => n.toLocaleString("ar-SA");
+    const collected = Math.min(cfg.collectedAmount, cfg.goalAmount);
+    const percent = Math.round((collected / cfg.goalAmount) * 100);
+
+    document.getElementById("collected").textContent = fmt(cfg.collectedAmount);
+    document.getElementById("goal").textContent = fmt(cfg.goalAmount);
+    document.getElementById("remaining").textContent = fmt(cfg.goalAmount - collected);
+    document.getElementById("amount").textContent = fmt(cfg.donationAmount);
+    document.getElementById("percent").textContent = percent + "%";
+    requestAnimationFrame(() => {
+      document.getElementById("bar").style.width = Math.max(percent, 2) + "%";
+    });
+
+    Moyasar.init({
+      element: ".mysr-form",
+      amount: cfg.donationAmount * 100,
+      currency: "SAR",
+      description: "تبرع لشراء PS5 و GTA 6",
+      publishable_api_key: cfg.publishableKey,
+      callback_url: new URL("thanks.html", window.location.href).href,
+      language: "ar",
+      supported_networks: ["mada", "visa", "mastercard"],
+      methods: ["creditcard"],
+    });
+  </script>
+</body>
+</html>
