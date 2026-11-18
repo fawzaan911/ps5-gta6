@@ -23,7 +23,12 @@ def create_invoice() -> str:
     req = urllib.request.Request(
         "https://api.moyasar.com/v1/invoices",
         data=body,
-        headers={"Authorization": AUTH, "Content-Type": "application/json"},
+        headers={
+            "Authorization": AUTH,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "ps5-gta6-donations/1.0",
+        },
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=15) as res:
@@ -42,8 +47,9 @@ class Handler(BaseHTTPRequestHandler):
         except Exception as exc:
             code = ""
             if isinstance(exc, urllib.error.HTTPError):
-                code = f" (Moyasar HTTP {exc.code})"
-                self.log_error("Moyasar invoice failed: HTTP %s %s", exc.code, exc.read()[:300])
+                detail = exc.read()[:300].decode(errors="replace")
+                code = f" (Moyasar HTTP {exc.code}: {detail})"
+                self.log_error("Moyasar invoice failed: HTTP %s %s", exc.code, detail)
             else:
                 self.log_error("Moyasar invoice failed: %s", exc)
             self.send_response(502)
