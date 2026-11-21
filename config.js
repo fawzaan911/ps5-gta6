@@ -6,7 +6,7 @@ window.DONATION_CONFIG = {
   maxAmount: 25,
   defaultAmount: 10,
   presetAmounts: [2, 5, 10, 25],
-  goalAmount: 3000,
+  goalAmount: 15000,
   // يظهر فقط إذا تعذّر الوصول لسيرفر Railway
   collectedAmount: 0,
 };

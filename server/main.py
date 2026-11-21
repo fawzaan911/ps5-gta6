@@ -13,7 +13,8 @@ from urllib.parse import parse_qs, urlparse
 SITE_URL = os.environ.get("SITE_URL", "https://fawzaan911.github.io/ps5-gta6/")
 SECRET_KEY = os.environ["MOYASAR_SECRET_KEY"].strip()
 AUTH = "Basic " + base64.b64encode(f"{SECRET_KEY}:".encode()).decode()
-DESCRIPTION = "gta6+ps5"
+DESCRIPTION = "سفر"
+OLD_DESCRIPTIONS = {"سفر", "gta6+ps5"}
 CAMPAIGN = "ps5-gta6"
 TOTAL_CACHE_SECONDS = 60
 MIN_AMOUNT = 2
@@ -62,7 +63,7 @@ def create_invoice(amount: int) -> str:
 
 def is_campaign_invoice(inv: dict) -> bool:
     metadata = inv.get("metadata") or {}
-    return metadata.get("campaign") == CAMPAIGN or inv.get("description") == DESCRIPTION
+    return metadata.get("campaign") == CAMPAIGN or inv.get("description") in OLD_DESCRIPTIONS
 
 
 def collected_total() -> float:
