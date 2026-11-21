@@ -78,6 +78,10 @@ body {
   border-radius: 16px 16px 0 0;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .plane-move { display: none; }
+}
+
 .scene figcaption {
   margin: 0;
   padding: 14px 16px;
